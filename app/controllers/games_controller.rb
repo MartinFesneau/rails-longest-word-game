@@ -11,6 +11,7 @@ class GamesController < ApplicationController
     voyels = Array.new(5) { VOYELS.sample }
     @letters = consonnes + voyels
     @letters = @letters.shuffle!
+    session[:global_score] = 0 if session[:global_score].nil?
   end
 
   def score
@@ -18,7 +19,9 @@ class GamesController < ApplicationController
     grid = params[:letters]
     if included?(attempt.upcase, grid)
       if attempt_is_english?(attempt)
-        @result = "Congrats, #{attempt} is a valid word"
+        score = attempt.length
+        @result = "Congrats, #{attempt} is a valid word, your score is #{score}, your global score is #{session[:global_score] + score}"
+        session[:global_score] += score
       else
         @result = "Sorry, #{attempt} is not an english word"
       end
